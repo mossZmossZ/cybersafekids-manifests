@@ -1,0 +1,10 @@
+namespace: cybersafekids
+
+resources:
+  - ../../base
+
+images:
+  - name: registry.cyber-safekids.com/cybersafekids/backend
+    newTag: v1.0.2
+  - name: registry.cyber-safekids.com/cybersafekids/frontend
+    newTag: v1.0.2
