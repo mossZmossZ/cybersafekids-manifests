@@ -23,7 +23,14 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: cyberschool-db
+        - name: init-sql
+          configMap:
+            name: postgres-init-sql
+          
+

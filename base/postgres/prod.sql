@@ -1,0 +1,1202 @@
+DROP TABLE IF EXISTS content_files;
+
+DROP TABLE IF EXISTS topic_contents;
+
+DROP TABLE IF EXISTS topics;
+
+DROP TYPE IF EXISTS role_enum;
+
+DROP TYPE IF EXISTS content_type_enum;
+
+DROP TYPE IF EXISTS file_type_enum;
+
+CREATE TYPE file_type_enum AS ENUM ('info', 'video', 'question', 'test', 'others');
+
+CREATE TYPE content_type_enum AS ENUM ('motion-graphic', 'short-video', 'others');
+
+CREATE TYPE role_enum AS ENUM ('teacher', 'student');
+
+-- Table: topics
+CREATE TABLE topics (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    role role_enum NOT NULL DEFAULT 'student',
+    description TEXT
+);
+
+-- Table: topic_contents
+CREATE TABLE topic_contents (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content_text TEXT,
+    content_description TEXT,
+    content_type content_type_enum NOT NULL DEFAULT 'short-video',
+    topic_id INTEGER,
+    CONSTRAINT fk_topic_contents_topic_id FOREIGN KEY (topic_id) REFERENCES topics (id) ON DELETE CASCADE
+);
+
+-- Table: content_files
+CREATE TABLE content_files (
+    id SERIAL PRIMARY KEY,
+    file_type file_type_enum NOT NULL DEFAULT 'info',
+    file_url VARCHAR(500) NOT NULL,
+    content_id INTEGER,
+    CONSTRAINT fk_content_files_content_id FOREIGN KEY (content_id) REFERENCES topic_contents (id) ON DELETE CASCADE
+);
+
+INSERT INTO
+    topics (title, role, description)
+VALUES (
+        '1. ภัยคุกคามด้านการเงิน',
+        'student',
+        'กิจกรรมนี้เป็นการให้ความเข้าใจเกี่ยวกับภัยคุกคามทางไซเบอร์ที่มุ่งเป้าไปยังข้อมูลส่วนตัวของผู้ใช้สื่อสังคมออนไลน์ และภัยไซเบอร์ที่เกี่ยวข้องกับการแฮกข้อมูลเพื่อประโยชน์ทางการเงิน โดยครอบคลุมทั้งวิธีการที่ข้อมูลรั่วไหล วิธีการฟิชชิ่ง (Phishing) แนวทางการปกป้องข้อมูล และการจัดการเมื่อเกิดเหตุขึ้นแล้ว มุ่งเน้นการสร้าง “ความตระหนักรู้” เป็นหนึ่งในเครื่องมือสำคัญของการป้องกันภัยในโลกไซเบอร์สำหรับเด็กและเยาวชน '
+    ),
+    (
+        '2. ภูมิคุ้มกันทางเพศ',
+        'student',
+        'กิจกรรมในส่วนนี้นำเสนอสาระสำคัญเกี่ยวกับภัยเงียบทางเพศบนโลกไซเบอร์ที่ไม่ควรถูกมองข้าม ซึ่งเป็นพฤติกรรมที่เด็กและเยาวชนควรตระหนักรู้และระวัง โดยครอบคลุมรูปแบบการคุกคามที่สำคัญ ได้แก่ การแสวงหาผลประโยชน์ทางเพศจากเด็กออนไลน์ (Online Child Sexual Exploitation), การล่อลวงออนไลน์ (Online Grooming), การข่มขู่แบล็กเมลทางเพศ (Sextortion), การส่งข้อความหรือภาพทางเพศ (Sexting), การสะกดรอยไซเบอร์ (Cyber Stalking) และการคุกคามทางเพศออนไลน์ (Cyber Sexual Harassment) ซึ่งล้วนแต่ส่งผลกระทบทางจิตใจและชีวิตประจำวันของเหยื่อได้อย่างรุนแรง กิจกรรมนี้ช่วยให้ผู้เรียนเข้าใจพฤติกรรมเสี่ยง รู้เท่าทันกลยุทธ์ของผู้ล่า และสามารถป้องกันตนเอง รวมถึงแนวทางการรับมือเมื่อตกเป็นเหยื่อ เพื่อสร้างภูมิคุ้มกันและทักษะการใช้สื่อออนไลน์อย่างปลอดภัย “รู้ทันก่อนพลาด ตระหนักก่อนตกเป็นเหยื่อ” คือหัวใจของการเรียนรู้ในกิจกรรมนี้อย่างแท้จริง'
+    ),
+    (
+        '3. พฤติกรรมไม่เหมาะสมในโลกไซเบอร์',
+        'student',
+        'กิจกรรมนี้สรุปสาระสำคัญเกี่ยวกับพฤติกรรมไม่เหมาะสมบนโลกออนไลน์ที่เสี่ยงต่อการผิดกฎหมาย เช่น การทัวร์ลงดารา การแชร์ภาพโป๊ การหลอกลวงซื้อขายสินค้า และการกลั่นแกล้งทางไซเบอร์ ซึ่งหลายพฤติกรรมแม้ทำไปด้วยอารมณ์หรือความคึกคะนอง แต่สามารถนำไปสู่ความผิดทางอาญาได้จริง เช่น โทษจำคุกหรือปรับตามกฎหมายคอมพิวเตอร์และกฎหมายอาญา เนื้อหาในกิจกรรมชุดนี้กระตุ้นให้ผู้เรียนรู้เท่าทันพฤติกรรมบนออนไลน์และเข้าใจผลทางกฎหมายจากการโพสต์ แชร์ หรือแสดงความคิดเห็นโดยไม่ยั้งคิด “คลิกเดียว อาจเปลี่ยนสถานะจากผู้ชมเป็นจำเลย” คือคำเตือนที่ควรตระหนักก่อนจะทำอะไรในโลกไซเบอร์'
+    ),
+    (
+        '4. สาระสำคัญที่ควรรู้เท่าทัน',
+        'student',
+        'กิจกรรมในส่วนนี้ นำเสนอเนื้อหาเกี่ยวกับ “ภัยคุกคามทางไซเบอร์” ที่เด็กและเยาวชนควรตระหนักรู้ โดยมุ่งเน้นทั้งความรู้กฎหมายที่เกี่ยวข้องกับการใช้สื่อออนไลน์ เช่น พระราชบัญญัติว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์, พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล และกฎหมายใหม่เกี่ยวกับการป้องกันอาชญากรรมทางเทคโนโลยี พร้อมทั้งยกตัวอย่างภัยใกล้ตัวที่เกิดขึ้นจริง ไม่ว่าจะเป็นการติดไวรัสมัลแวร์จากการใช้อินเทอร์เน็ตหรือ wi-fi สาธารณะ, การถูกหลอกในเกมออนไลน์ รวมถึงการตกเป็นเหยื่อแก๊งคอลเซ็นเตอร์และฟิชชิ่ง โดยสื่อการเรียนรู้นี้ เน้นให้ความรู้จากประสบการณ์จริงของผู้เชี่ยวชาญและผู้ที่เคยตกเป็นเหยื่อจริง เช่น ตำรวจสายเทคโนโลยี, นักธุรกิจเกมออนไลน์ และอดีตแก๊งคอลเซ็นเตอร์ เพื่อให้ผู้เรียนเห็นภาพชัดและเข้าใจกลไกการหลอกลวง สามารถป้องกันตัวเองจากภัยออนไลน์เหล่านี้ได้อย่างถูกต้องทันเหตุการณ์ สะท้อนให้เห็นว่าสื่อชุดนี้ไม่ใช่แค่การเตือน แต่เป็นการสร้าง “ภูมิคุ้มกันดิจิทัล” ให้กับเด็กและเยาวชนในยุคไซเบอร์'
+    ),
+    (
+        'ความรู้ภัยไซเบอร์ (สำหรับครูผู้สอน)',
+        'teacher',
+        null
+    );
+
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES (
+        '1. ข้อมูลส่วนตัวเราหลุดได้อย่างไร',
+        'ข้อมูลที่คุณกรอก อาจเป็นข้อมูลที่เขาใช้หลอก',
+        'การรั่วไหลของข้อมูลส่วนตัวสามารถเกิดจากพฤติกรรมของผู้ใช้เอง (โพสต์ลงโซเชียล, ใช้แอปที่ไม่ระวัง), จากความไม่ปลอดภัยของเว็บไซต์หรือแอปพลิเคชัน, หรือการถูกแฮกโดยตรง ข้อมูลที่ถูกนำไปใช้ ได้แก่ ชื่อผู้ใช้, รหัสผ่าน, หมายเลขบัตรประชาชน, ข้อมูลธนาคาร ซึ่งมิจฉาชีพสามารถนำไปหลอกลวง ปลอมแปลงตัวตน หรือแสวงหาผลประโยชน์อื่น ๆ ได้',
+        'motion-graphic',
+        1
+    ),
+    (
+        '2. Phishing (ฟิชชิง) การตกปลาล่อเหยื่อ',
+        'ฟิชชิ่งไม่ใช่แค่ตกปลา แต่ตกข้อมูลทั้งชีวิต',
+        'Phishing คือการหลอกให้เหยื่อให้ข้อมูลส่วนตัวผ่านเว็บไซต์ปลอมที่ดูเหมือนเว็บไซต์จริง มักมาในรูปแบบของอีเมล, SMS, หรือแชทจากคนรู้จักที่ถูกแฮก ข้อมูลที่ถูกขโมยอาจถูกใช้ทำธุรกรรมทางการเงิน เปิดบัญชีปลอม หรือแบล็กเมล์ รวมถึงส่งผลกระทบทางจิตใจ',
+        'motion-graphic',
+        1
+    ),
+    (
+        '3. เราจะปกป้องข้อมูลส่วนตัวของเราในโลกออนไลน์ได้อย่างไร',
+        'รหัสผ่านดี มีชัยไปกว่าครึ่ง',
+        'การป้องกันภัยไซเบอร์เริ่มต้นจากตัวเรา เช่น หลีกเลี่ยงการเปิดเผยข้อมูลส่วนตัว, ไม่คลิกลิงก์ที่ไม่น่าไว้ใจ, ตั้งรหัสผ่านที่ปลอดภัย, ไม่ใช้ Wi-Fi สาธารณะ, และติดตั้งโปรแกรมรักษาความปลอดภัยเสมอ โดยควรมีความรู้พื้นฐานด้านไอทีอย่างต่อเนื่อง และระมัดระวังในการใช้แอปพลิเคชันต่าง ๆ',
+        'motion-graphic',
+        1
+    ),
+    (
+        '4. หากรู้ตัวว่าพลาดไปแล้ว เงินหาย โดนสวมรอยต้องทำอย่างไร',
+        'เก็บหลักฐาน-แจ้งความ-ติดต่อธนาคาร: สูตรเอาตัวรอดจากภัยไซเบอร์',
+        'หากรู้ตัวว่าโดนหลอก ต้องรีบดำเนินการทันที ได้แก่ การเปลี่ยนรหัสผ่าน, ระงับการใช้บัตร, ติดต่อธนาคาร, แจ้งความ และรวบรวมหลักฐานให้พร้อม นอกจากนี้ หากถูกสวมรอยบนโซเชียล เช่น ใช้รูปโปรไฟล์ปลอม ต้องรีบแจ้งแพลตฟอร์ม, กระทรวงดิจิทัลฯ และตำรวจ ความเร็วในการจัดการคือกุญแจสำคัญในการลดความเสียหาย',
+        'motion-graphic',
+        1
+    ),
+    (
+        '1. เกมล่อเหยื่อ',
+        NULL,
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เกี่ยวกับการโจมตีแบบฟิชชิ่งและมัลแวร์ ผ่านตัวละครวัยรุ่นที่มีความรู้ด้านไอทีแต่ขาดความระมัดระวัง เนื้อหาแสดงกระบวนการหลอกลวงของแฮกเกอร์ที่ใช้เว็บไซต์ปลอมและเทคนิค Social Engineering เพื่อขโมยข้อมูลส่วนบุคคล ส่งผลให้ธุรกิจออนไลน์ครอบครัวได้รับความเสียหายและลูกค้าตกเป็นเหยื่อการโจรกรรมข้อมูลบัตรเครดิต สื่อนี้สร้างความตระหนักถึงความสำคัญของการรักษาความปลอดภัยข้อมูลและผลกระทบที่อาจเกิดขึ้นจากพฤติกรรมเสี่ยงในการใช้อินเทอร์เน็ต',
+        'short-video',
+        1
+    ),
+    (
+        '2. บัญชีม้า',
+        NULL,
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เกี่ยวกับการใช้บัญชีม้าในการฉ้อโกงออนไลน์ ผ่านเรื่องราวของนักเรียนที่ตกอยู่ในสถานการณ์ขัดสนทางการเงิน เนื้อหาแสดงกระบวนการหลอกลวงของมิจฉาชีพที่เสนอผลตอบแทนจากการให้ยืมบัญชีธนาคาร โดยไม่เปิดเผยความจริงเกี่ยวกับการใช้บัญชีในกิจกรรมผิดกฎหมาย ส่งผลให้เยาวชนต้องรับผิดชอบทางกฎหมายแทนผู้กระทำความผิดที่แท้จริง เป็นสื่อที่สร้างความตระหนักถึงอันตรายของการยินยอมให้ผู้อื่นใช้ข้อมูลส่วนบุคคลเพื่อแลกกับผลประโยชน์ทางการเงิน',
+        'short-video',
+        1
+    );
+
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES
+    -- Content ID 1
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/1. ข้อมูลส่วนตัวเราหลุดได้อย่างไร.mp4',
+        1
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/2. Info_ข้อมูลส่วนตัวเราหลุดได้อย่างไร.png',
+        1
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/3. Question_ข้อมูลส่วนตัวเราหลุดได้อย่างไร.pdf',
+        1
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/4. Test_ข้อมูลส่วนตัวเราหลุดได้อย่างไร.jpg',
+        1
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/1. Phishing (ฟิชชิ่ง) การตกปลาล่อเหยื่อ.mp4',
+        2
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/2. Info_Phishing(ฟิชชิ่ง) การตกปลาล่อเหยื่อ.png',
+        2
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/3. Question_Phishing (ฟิชชิ่ง) การตกปลาล่อเหยื่อ.pdf',
+        2
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/4. Test_Phishing (ฟิชชิ่ง) การตกปลาย่อเหยื่อ.jpg',
+        2
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/1. เราจะปกป้องข้อมูลส่วนตัวของเราในโลกออนไลน์ได้อย่างไร.mp4',
+        3
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/2. Info_เราจะปกป้องข้อมูลส่วนตัวของเราในโลกออนไลน์ได้อย่างไร.png',
+        3
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/3. Question_เราจะปกป้องข้อมูลส่วนตัวของเราในโลกออนไลน์ได้อย่างไร.pdf',
+        3
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/4. Test_เราจะปกป้องข้อมูลส่วนตัว ในโลกออนไลน์ได้อย่างไร.jpg',
+        3
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/1. หากรู้ตัวว่าพลาดไปแล้ว _ เงินหาย โดนสวมรวมต้องทำอย่างไรดี.mp4',
+        4
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/2.Info_หากรู้ตัวว่าพลาดไปแล้ว เงินหาย โดนสวมรวมต้องทำอย่างไรดี.PNG',
+        4
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/3.Question_หากเรารู้ตัวว่าพลาดไปแล้ว เงินหาย โดนสวมรอยต้องทำอย่างไร.PDF',
+        4
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/4. Test_หากรู้ตัวว่าพลาดไปแล้ว เงินหาย โดนสวมรอย ต้องทำอย่างไร.jpg',
+        4
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/1. เกมล่อเหยื่อ.mp4',
+        5
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/2. Info_เกมล่อเหยื่อ.png',
+        5
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/3. Question_เกมล่อเหยื่อ.pdf',
+        5
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/4. Test_เกมล่อเหยื่อ.jpg',
+        5
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/1. บัญชีม้า.mp4',
+        6
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/2. Info_บัญชีม้า.png',
+        6
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/3. Question_บัญชีม้า.pdf',
+        6
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content1/4. Test_บัญชีม้า.jpg',
+        6
+    );
+
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES (
+        'Online Child Sexual Exploitation – การแสวงหาผลประโยชน์ทางเพศจากเด็กบนโลกออนไลน์',
+        'ภัยเงียบที่อาจเกิดขึ้นได้แม้เด็กจะอยู่ในบ้านของตัวเอง',
+        'การแสวงหาผลประโยชน์ทางเพศจากเด็กผ่านทางโลกออนไลน์ เป็นภัยที่มีความรุนแรงและส่งผลกระทบร้ายแรงต่อเด็กและเยาวชนทั้งทางร่างกายและจิตใจ เด็กอาจถูกบังคับหรือหลอกให้ถ่ายภาพโป๊เปลือย/คลิปฉาวในบ้านของตนเอง แล้วเผยแพร่หรือจำหน่ายต่อในอินเทอร์เน็ต ผู้กระทำผิดอาจใช้เทคโนโลยี เช่น AI สร้างภาพโป๊เด็กปลอมให้เสมือนจริง และบางครั้งผู้ปกครองหรือคนในครอบครัวก็มีส่วนร่วมด้วย การรับมือจำเป็นต้องอาศัยการตระหนักรู้ สอนเด็กไม่ให้เปิดเผยภาพหรือข้อมูลส่วนตัว และมีระบบแจ้งเบาะแสที่เข้มแข็งจากผู้ใหญ่และหน่วยงานที่เกี่ยวข้อง',
+        'motion-graphic',
+        2
+    ),
+    (
+        'Cyber Sexual Harassment – การคุกคามทางเพศบนโลกออนไลน์',
+        'พฤติกรรมเหล่านี้ไม่ใช่เรื่อง "เล่น ๆ" หรือ "ขำ ๆ"',
+        'การคุกคามทางเพศบนโลกออนไลน์ เกิดขึ้นในรูปแบบการส่งภาพ ข้อความ หรือคลิปอนาจารผ่านแชท โซเชียลมีเดีย อีเมล หรือคอมเมนต์ใต้โพสต์ ผู้กระทำอาจข่มขู่แบล็กเมลให้เด็กส่งภาพส่วนตัวหรือทำสิ่งที่ไม่เหมาะสม บางครั้งนำภาพไปตัดต่อเพื่อก่อกวนหรือทำให้เสื่อมเสีย มีการดูถูกเรื่องรสนิยมทางเพศ และลามกเชิงสัญลักษณ์ การละเมิดเหล่านี้ส่งผลให้เหยื่อรู้สึกอับอาย ซึมเศร้า หรือวิตกกังวล จึงจำเป็นต้องมีมาตรการบล็อก แจ้งลบ และลงโทษทางกฎหมายควบคู่กับการสร้างความรู้แก่เด็กและเยาวชน',
+        'motion-graphic',
+        2
+    ),
+    (
+        'Online Grooming – การล่อลวงทางเพศในโลกออนไลน์',
+        'คนร้ายมักเริ่มต้นด้วยความหวังดี แต่สุดท้ายอาจจบด้วยการหวังร้ายกับเรา',
+        'Online Grooming คือกระบวนการที่มิจฉาชีพเข้ามาตีสนิท ล่อลวงเด็กให้ไว้ใจผ่านอินเทอร์เน็ตหรือโซเชียลมีเดีย โดยเริ่มจากเลือกเป้าหมายที่โดดเดี่ยว สร้างความสนิทสนมให้เหยื่อรู้สึกพิเศษ จากนั้นค่อยๆ พูดคุยเรื่องเพศหรือส่งเนื้อหาเชิงล่อแหลม และกระตุ้นให้เด็กส่งภาพ/วิดีโอไม่เหมาะสม จนในที่สุดอาจเชิญพบตัวจริงหรือใช้ข้อมูลเหล่านั้นแบล็กเมล การป้องกันต้องเริ่มจากสอนเด็กไม่รับเพื่อนออนไลน์จากคนแปลกหน้าและระมัดระวังเมื่อถูกชักจูงเรื่องเพศ',
+        'motion-graphic',
+        2
+    ),
+    (
+        'Sextortion – หักหลังหวัง(มากกว่า) เพศ',
+        'หากโดนข่มขู่ หรือรู้ตัวว่าเสี่ยง อย่าเก็บไว้คนเดียว รีบบอกผู้ใหญ่ทันที',
+        'Sextortion เกิดจากการล่อลวงให้ผู้ถูกกระทำแสดงพฤติกรรมทางเพศผ่านกล้องหรือส่งภาพโป๊ จากนั้นมิจฉาชีพจะบันทึกคลิปไว้เพื่อข่มขู่แบล็กเมล เรียกเงิน หรือบังคับให้ส่งภาพ/คลิปเพิ่มเติม บางรายอาจขู่นัดพบเพื่อบังคับให้มีเพศสัมพันธ์จริง ผู้ตกเป็นเหยื่อมักประสบปัญหาทางการเงิน ชื่อเสียง และบาดแผลทางจิตใจ การรับมือจึงต้องห้ามส่งต่อข้อมูลส่วนตัว เปลี่ยนรหัสผ่านทันที และขอความช่วยเหลือจากผู้ใหญ่หรือตำรวจ',
+        'motion-graphic',
+        2
+    ),
+    (
+        'Sexting – ข้อความเดียวก็หวั่นไหวได้',
+        'คิดก่อนส่ง ข้อความเดียวอาจเปลี่ยนชีวิตได้',
+        'Sexting คือการส่งหรือพูดคุยเรื่องเพศผ่านข้อความ รูปภาพ หรือวิดีโอ 18+ ในกลุ่มเพื่อนหรือแฟน แม้จะดูเป็นเรื่องธรรมชาติ แต่หากเนื้อหาถูกเผยแพร่โดยไม่ได้รับอนุญาต อาจนำไปสู่การข่มขู่แบล็กเมลหรือกลั่นแกล้งในโลกออนไลน์ อีกทั้งเสี่ยงต่อการถูกล่อลวงและถูกติดตาม (Grooming, Stalking) นักเรียนจึงควรตระหนักว่าทุกครั้งที่กด “ส่ง” ข้อมูลจะไม่สามารถควบคุมผลลัพธ์ได้ จึงควรหลีกเลี่ยงการแชร์เนื้อหาเร้าใจทางเพศ',
+        'motion-graphic',
+        2
+    ),
+    (
+        'Cyber Stalking – สะกดรอยเหยื่อออนไลน์',
+        'ถ้าไม่อยากถูกสะกดรอย ก็อย่าโพสต์ทุกเรื่องในชีวิต',
+        'Cyber Stalking คือการติดตาม สอดส่อง หรือสะกดรอยชีวิตของเหยื่อทางออนไลน์ ผู้กระทำอาจใช้โปรไฟล์ปลอม รับเป็นเพื่อนในโซเชียลมีเดีย แล้วดูโพสต์ เช็คอิน หรือทักข้อความไม่หยุด การถูกสะกดรอยทำให้เหยื่อรู้สึกอึดอัด วิตกกังวล และถูกละเมิดความเป็นส่วนตัว การป้องกันรวมถึงการตั้งค่าความเป็นส่วนตัว หลีกเลี่ยงการแชร์ข้อมูลตำแหน่ง และบล็อกบัญชีที่น่าสงสัย พร้อมทั้งแจ้งให้ผู้ปกครองหรือเจ้าหน้าที่ทราบทันที',
+        'motion-graphic',
+        2
+    ),
+    (
+        'เราควรจะป้องกันตนเองอย่างไร ไม่ให้ตกเป็นเหยื่อการแสวงหาผลประโยชน์ทางเพศบนพื้นที่ไซเบอร์',
+        'ความกล้าในการขอความช่วยเหลือ คือ "เกราะป้องกัน" ที่ดีที่สุด',
+        'การป้องกันตนเองเริ่มที่การควบคุมข้อมูลส่วนตัวบนโซเชียลมีเดีย โดยไม่เปิดเผยตำแหน่ง ที่อยู่ หรือกิจวัตรประจำวัน ตั้งค่าความเป็นส่วนตัว รับเพื่อนเฉพาะคนรู้จัก ทบทวนก่อนโพสต์หรือส่งรูป และอย่าส่งเนื้อหาเร้าใจ แม้จะไว้ใจกันมากก็ตาม นอกจากนี้ ควรหลีกเลี่ยงการพูดคุยเรื่องเพศทางออนไลน์ ปฏิเสธทันทีเมื่อรู้สึกไม่สบายใจ และกล้าขอความช่วยเหลือจากผู้ใหญ่เมื่อเกิดปัญหา เพื่อให้โลกออนไลน์เป็นพื้นที่ปลอดภัย',
+        'motion-graphic',
+        2
+    ),
+    (
+        'การรับมือเมื่อตกเป็นเหยื่อภัยคุกคามทางเพศบนไซเบอร์',
+        'การขอความช่วยเหลือคือทางออกที่ดีที่สุด',
+        'หากตกเป็นเหยื่อให้ตั้งสติ อย่าโทษตัวเอง รีบแจ้งผู้ปกครอง ครู หรือเจ้าหน้าที่ เปลี่ยนรหัสผ่านบัญชีทั้งหมด รวบรวมหลักฐานการข่มขู่ แชท หรือหลักฐานการโอนเงิน แจ้งศูนย์ช่วยเหลือของแพลตฟอร์มโซเชียลมีเดีย และตำรวจทันที อย่าทำตามคำขู่เพื่อจบเรื่อง เพราะจะยิ่งเพิ่มความรุนแรง ควรขอคำปรึกษาทางกฎหมายและจิตวิทยาเพื่อประเมินความเสียหายและการเยียวยาทางใจ',
+        'motion-graphic',
+        2
+    ),
+    (
+        '"เพศ-ภัย" ไซเบอร์',
+        NULL,
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เรื่องจริงที่เกิดขึ้นเกี่ยวกับภัยคุกคามทางเพศออนไลน์ (ภัยที่เกี่ยวข้องกับการแสวงหาผลประโยชน์ทางเพศกับเด็กและเยาวชน) การแสดงให้เห็นถึงพฤติกรรมการติดต่อสื่อสารกับมิจฉาชีพ สื่อชุดนี้เป็นการสร้างความตระหนักในด้านรู้เท่าทันมิจฉาชีพที่เข้าหาเด็กและเยาวชนในรูปแบบออนไลน์เพื่อแสวงหาผลประโยชน์ทางเพศจากเด็ก และแสดงให้เห็นผลกระทบที่เกิดขึ้นจากการตกเป็นเหยื่อภัยคุกคามทางเพศ โดยเนื้อหาในเรื่องเกี่ยวกับเด็กสาวที่ถูกผู้ร้ายใช้สื่อโซเชี่ยลออนไลน์เข้าหาสร้างความไว้วางใจ จนนำไปสู่การขอรูปภาพลามกอนาจารของเด็กในที่สุด ',
+        'short-video',
+        2
+    );
+
+-- Online Child Sexual Exploitation
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/child-sexual-exploitation/1. Online Child Sexual Exploitation.mp4',
+        7
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/child-sexual-exploitation/2. Info_Online Child Sexual Exploitation.png',
+        7
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/child-sexual-exploitation/3. Question_Online Child Sexual Exploitation.pdf',
+        7
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/child-sexual-exploitation/4. Test_Online Child Sexual Exploitation.jpg',
+        7
+    );
+
+-- Cyber Sexual Harassment
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexual-harassment/1. Cyber Sexual Harassment.mp4',
+        8
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexual-harassment/2. Info_Cyber sexual Harassment.png',
+        8
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexual-harassment/3. Question_Cyber sexual Harassment.pdf',
+        8
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexual-harassment/4. Test_Cyber Sexual Harassment.png',
+        8
+    );
+
+-- Online Grooming
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/online-grooming/1. Online Grooming.mp4',
+        9
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/online-grooming/2. Info_online grooming.png',
+        9
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/online-grooming/3. Question_online grooming.pdf',
+        9
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/online-grooming/4. Test__online grooming.png',
+        9
+    );
+
+-- Sextortion
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sextortion/1. Sextortion.mp4',
+        10
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sextortion/2. Info_sextortion.png',
+        10
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sextortion/3. Question_sextortion.pdf',
+        10
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sextortion/4. Test_Sextortion.png',
+        10
+    );
+
+-- Sexting
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexting/1. Sexting.mp4',
+        11
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexting/2. Info_sexting.png',
+        11
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexting/3. Question_Sexting.pdf',
+        11
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/sexting/4. Test_Sexting.png',
+        11
+    );
+
+-- Cyber Stalking
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/cyber-stalking/1. Cyber Stalking.mp4',
+        12
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/cyber-stalking/2. Info_cyber stalking.png',
+        12
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/cyber-stalking/3. Question_Cyber Stalking.pdf',
+        12
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/cyber-stalking/4. Test_Cyber Stalking.png',
+        12
+    );
+
+-- Self-Defence
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/self-defence/1. เราควรจะป้องกันตนเองอย่างไร.mp4',
+        13
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/self-defence/2. Info_เราควรจะป้องกันตนเองอย่างไร.png',
+        13
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/self-defence/3. Question_เราควรจะป้องกันตนเองอย่างไร.pdf',
+        13
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/self-defence/4. Test_เราควรจะป้องกันตนเองอย่างไร.png',
+        13
+    );
+
+-- Victimization
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/victimization/1. การรับมือเมื่อตกเป็นเหยื่อ.mp4',
+        14
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/victimization/2. Info_การรับมือการตกเป็นเหยื่อ.png',
+        14
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/victimization/3. Question_การรับมือการตกเป็นเหยื่อ.pdf',
+        14
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/motion-graphic/victimization/4. Test_การรับมือเมื่อตกเป็นเหยื่อ.png',
+        14
+    );
+
+-- Sex-Cyber (Short Video)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/short-video/sex-cyber/1. เพศ-ภัย ไซเบอร์.mp4',
+        15
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/short-video/sex-cyber/2. Info_ เพศ-ภัย ไซเบอร์.jpg',
+        15
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/short-video/sex-cyber/3. Question_เพศ-ภัย ไซเบอร์.pdf',
+        15
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content2/short-video/sex-cyber/4. Test_เพศ ภัย ไซเบอร์.png',
+        15
+    );
+
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES
+    -- 1. ทัวร์ลง
+    (
+        '1. ทัวร์ลง',
+        'อารมณ์พาไป พาใจเข้าคุก',
+        'ในยุคที่ใครก็สามารถแสดงความคิดเห็นได้ผ่านสื่อโซเชียล การใช้สิทธิดังกล่าวโดยไม่มีขอบเขตหรือไม่รู้ข้อเท็จจริง อาจกลายเป็นความผิดทางกฎหมาย โดยเฉพาะการโพสต์ใส่ร้าย ตัดต่อภาพให้เสียหาย หรือแสดงความคิดเห็นรุนแรงต่อบุคคลอื่น โดยเฉพาะเมื่อเราไม่ได้อยู่ในเหตุการณ์จริง อาจผิดพระราชบัญญัติคอมพิวเตอร์มาตรา 14 (1) ว่าด้วยการเผยแพร่ข้อมูลบิดเบือน และอาจผิดฐานหมิ่นประมาทด้วยการโฆษณาตามกฎหมายอาญา โทษจำคุกไม่เกิน 2 ปี ปรับไม่เกิน 200,000 บาท แม้เจตนาจะปกป้องบุคคลที่ชื่นชอบ เช่น ดารา หรือศิลปิน แต่หากใช้คำพูดเกินขอบเขต ก็อาจกลายเป็น “ผู้ต้องหา” โดยไม่รู้ตัว',
+        'motion-graphic',
+        3
+    ),
+    (
+        '2. การส่งต่อภาพโป๊',
+        'คลิกแชร์สื่อลามก อาจกลายเป็นอาชญากรในพริบตา',
+        'แม้จะเป็นการส่งต่อสื่อเพื่อความสนุกสนาน แต่การส่งภาพหรือวิดีโอลามกผ่านแอปพลิเคชันหรือโซเชียลมีเดีย ถือเป็นความผิดตามกฎหมาย หากเป็นการอัปโหลดหรือแชร์ให้คนอื่นเห็น จะผิดตาม พ.ร.บ.คอมพิวเตอร์ มาตรา 14 (4) และ (5) โทษจำคุกไม่เกิน 5 ปี และหากมีการเผยแพร่เพื่อการค้า จ่ายแจก หรือแสดงอวด จะผิดตามประมวลกฎหมายอาญา มาตรา 287 และที่สำคัญคือ หากเป็นสื่อลามกเด็ก แม้แค่มีไว้ในครอบครองก็ถือว่ามีความผิดตามมาตรา 287/1 มีโทษจำคุกสูงสุดถึง 7 ปี',
+        'motion-graphic',
+        3
+    ),
+    (
+        '3. การหลอกลวงหรือฉ้อโกงออนไลน์',
+        'ช้อปไม่ระวัง อาจพังทั้งบัญชี',
+        'ในยุคที่การซื้อขายออนไลน์เฟื่องฟู การหลอกลวงทางอินเทอร์เน็ตกลับเพิ่มขึ้นตามมาอย่างรวดเร็ว เช่น การสั่งของแล้วไม่ได้รับสินค้า ได้ของไม่ตรงปก หรือหลอกให้โอนเงินโดยใช้ข้อมูลปลอม พฤติกรรมเหล่านี้เข้าข่ายความผิดตาม พ.ร.บ.คอมพิวเตอร์ มาตรา 14 (1) และอาจผิดตามกฎหมายอาญา มาตรา 341 ฐานฉ้อโกง ซึ่งมีโทษจำคุกสูงสุด 3 ปี หรือถ้าใช้โซเชียลหลอกหลายคน อาจเข้าข่าย “ฉ้อโกงประชาชน” ซึ่งมีโทษหนักขึ้นถึง 5 ปี ทั้งนี้ ปัจจุบันประชาชนสามารถแจ้งความออนไลน์ หรือขอให้ธนาคารอายัดบัญชีผู้กระทำผิดได้ทันทีตามพระราชกำหนดปี 2566',
+        'motion-graphic',
+        3
+    ),
+    (
+        '4. การคุกคาม และการกลั่นแกล้ง รังแกทางออนไลน์',
+        'คำล้อเล่นของคุณ อาจเป็นแผลลึกของใครบางคน',
+        'Cyberbullying และการคุกคามออนไลน์เป็นพฤติกรรมที่พบได้บ่อย โดยเฉพาะในหมู่วัยรุ่น เช่น การล้อรูปร่าง หน้าตา สีผิว การโพสต์ภาพแอบถ่าย หรือการข่มขู่ว่าจะทำร้าย แม้จะไม่มีบทบัญญัติเฉพาะใน พ.ร.บ.คอมฯ แต่สามารถเอาผิดตามกฎหมายอาญา มาตรา 397 ได้ ซึ่งเป็นความผิดลหุโทษ หากเป็นการล่วงละเมิดทางเพศ หรือผู้กระทำมีอำนาจเหนือกว่า เช่น ครูกับนักเรียน หรือหัวหน้ากับลูกน้อง โทษจะเพิ่มขึ้นเป็นจำคุก 1 เดือน ปรับไม่เกิน 10,000 บาท',
+        'motion-graphic',
+        3
+    );
+
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES
+    -- 1. รอยเท้าดิจิทัล รอยอันตราย
+    (
+        '1. รอยเท้าดิจิทัล รอยอันตราย',
+        'โพสต์วันนี้ กระทบอนาคตหรือไม่?',
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เกี่ยวกับการสร้างรอยดิจิทัล (Digital Footprint) และผลกระทบจากการโพสต์เนื้อหาโดยไม่คิดผลที่ตามมา เนื้อหาแสดงพฤติกรรมการล้อเลียนและประจานผู้อื่นผ่านโซเชียลมีเดีย และวิธีการที่มิจฉาชีพนำข้อมูลที่ถูกเปิดเผยไปใช้สร้างบัญชีปลอมเพื่อหลอกลวงผู้อื่น ส่งผลให้ผู้โพสต์กลายเป็นผู้ต้องสงสัยในคดีอาชญากรรมไซเบอร์ สื่อนี้สร้างความตระหนักถึงความสำคัญของการใช้โซเชียลมีเดียอย่างรับผิดชอบและผลกระทบระยะยาวของการเผยแพร่ข้อมูลออนไลน์',
+        'short-video',
+        3
+    ),
+    (
+        '2. เสียงหลอนออนไลน์',
+        'ปัญหาพฤติกรรมการใช้อินเทอร์เน็ตและการเสพติดสื่อ',
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เกี่ยวกับการเสพติดโลกออนไลน์และสื่อดิจิทัลอย่างรุนแรง ผ่านตัวละครเด็กหญิงที่ใช้เวลากับโซเชียลมีเดียมากเกินไป เนื้อหาแสดงอาการทางจิตวิทยาที่เกิดจากการใช้สื่อดิจิทัลผิดปกติ เช่น การหลอน การไม่สามารถแยกแยะโลกจริงและโลกเสมือนจริง และการสูญเสียความสัมพันธ์กับคนรอบข้าง สื่อเน้นความสำคัญของการ Digital Detox การรักษาด้วยจิตบำบัด และการฟื้นฟูคุณภาพชีวิตเพื่อกลับสู่โลกแห่งความเป็นจริง สร้างความตระหนักถึงอันตรายของการใช้สื่อออนไลน์อย่างไร้ขีดจำกัด',
+        'short-video',
+        3
+    ),
+    (
+        '3. ไซเบอร์ Overload',
+        NULL,
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เรื่องจริงที่เกิดขึ้นเกี่ยวกับภัยคุกคามทางไซเบอร์ที่มิจฉาชีพแฝงตัวเข้าหาเด็กและเยาวชนผ่านทางเกมออนไลน์ เพื่อเป็นการสร้างความตระหนักรู้ให้แก่เด็กและเยาวชนถึงวิธีการที่มิจฉาชีพเข้าหาเพื่อหลอกนำข้อมูลส่วนบุคคลไปเปิดบัญชีม้า และแสดงให้เห็นถึงผลกระทบที่เกิดขึ้นทางกฎหมายจากการตกเป็นเหยื่อของมิจฉาชีพออนไลน์ นอกจากนี้แสดงถึงพฤติกรรมการติดเกมของเด็กและเยาวชนที่ส่งผลต่อสุขภาพ และผลกระทบอื่นๆ ตามมา โดยเรื่องราวในสื่อการเรียนรู้นำเสนอผ่านตัวละครของเด็กชายที่ชื่นชอบการเล่นเกมเป็นอย่างมาก มิจฉาชีพจึงอาศัยจังหวะเกมนี้เขามาขอข้อมูลส่วนบุคคลของเด็กแลกกับไอเท็มในเกม เพื่อนำข้อมูลที่ได้นี้ไปเปิดเป็นบัญชีม้า',
+        'short-video',
+        3
+    ),
+    (
+        '4. บูลลี่ออนไลน์',
+        NULL,
+        'สื่อชุดนี้นำเสนอภัยไซเบอร์เรื่องจริงที่เกิดขึ้นจากการกลั่นแกล้งรังแกกันทางออนไลน์ (cyberbullying) การนำเสนอพฤติกรรมการกลั่นแกล้งของเพื่อนๆ ในการแอบถ่ายภาพ และทำการส่งต่อทำให้เกิดความอับอาย และส่งผลให้เด็กและเยาวชนที่ตกเป็นเหยื่อฆ่าตัวตายในที่สุด สื่อชุดนี้เป็นการสร้างความตระหนักถึงพฤติกรรมเสี่ยงของการคุกคมและการกลั่นแกล้งรังแกกันทางออนไลน์ และผลกระทบที่เกิดขึ้นตามมาจากการตกเป็นเหยื่อของการรังแกกันทางออนไลน์ (cyberbullying) ทั้งต่อเด็กและเยาวชนและทางครอบครัว โดยสื่อการเรียนรู้นำเสนอเรื่องผ่านมุมการเล่าเรื่องของแม่ของผู้ตกเป็นเหยื่อการรังแกกันทางออนไลน์จนนำไปสู่ความสูญเสียในท้ายที่สุด',
+        'short-video',
+        3
+    ),
+    (
+        '5. ผู้ค้า หรือมิจฉาชีพ',
+        NULL,
+        'สื่อชุดนี้นำเสนอเรื่องจริงของมิจฉาชีพออนไลน์ที่แฝงตัวเข้ามาในรูปแบบของผู้ขายของออนไลน์ การขายสินค้าที่ไม่มีคุณภาพส่งผลกระทบถึงชีวิตของผู้ที่ตกเป็นเหยื่อได้เช่นกัน สื่อชุดนี้เป็นการสร้างความตระหนักในการซื้อสินค้าทางออนไลน์ เป็นแนวทางในการป้องกันภัยไซเบอร์ด้านการซื้อของออนไลน์ และสร้างความตระหนักรู้ด้านรูปแบบของมิจฉาชีพในหลอกขายของออนไลน์ และเมื่อตกเป็นเหยื่อแล้วควรทำอย่างไร เรื่องราวในสื่อการเรียนรู้ตอนนี้นำเสนอผ่านเรื่องจริงของมิจฉาชีพที่อาศัยช่วงโควิด ผู้คนต้องการสินค้า เช่น หน้ากาก ถังออกซิเจน หลอกขายของจนทำให้เกิดความสูญเสียแก่ผู้ตกเป็นเหยื่อ',
+        'short-video',
+        3
+    );
+
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/cyber-bullying/1. การคุกคามและการกลั่นแกล้งรังแกกันทางออนไลน์.mp4',
+        19
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/cyber-bullying/2. Info_การคุกคาม และการกลั่นแกล้งรังแกกันทางออนไลน์.png',
+        19
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/cyber-bullying/3. Question_การคุกคามและการกลั่นแกล้งออนไลน์.pdf',
+        19
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/cyber-bullying/4. Test_การคุกคามและการกลั่นแกล้งออนไลน์.png',
+        19
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/fraud/1. การหลอกลวงหรือฉ้อโกงออนไลน์.mp4',
+        18
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/fraud/2. Info_การหลอกลวงหรือฉ้อโกงออนไลน์.png',
+        18
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/fraud/3. Question_การหลอกลวงหรือฉ้อโกงออนไลน์.pdf',
+        18
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/fraud/4. Test_การหลอกลวงหรือฉ้อโกงออนไลน์.png',
+        18
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/leakphoto/1. การส่งต่อภาพโป๊.mp4',
+        17
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/leakphoto/2. Info_การส่งต่อภาพโป๊ .png',
+        17
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/leakphoto/3. Question_การส่งต่อภาพโป๊.pdf',
+        17
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/leakphoto/4. Test_การส่งต่อภาพโป๊.png',
+        17
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/tour/1. ทัวร์ลง.mp4',
+        16
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/tour/2. Info_ทัวร์ลง .png',
+        16
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/tour/3. Question_ทัวร์ลง.pdf',
+        16
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/motion-graphic/tour/4. Test_ทัวร์ลง.png',
+        16
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/digital-footprint/1. รอยเท้าดิจิทัล รอยอันตราย.mp4',
+        20
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/digital-footprint/2. Info_รอยเท้าดิจิทัล รอยอันตราย.png',
+        20
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/digital-footprint/3. Question_รอยเท้าดิจิทัล รอยอันตราย.pdf',
+        20
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/digital-footprint/4. Test_รอยเท้าดิจิทัล รอยอันตราย.jpg',
+        20
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-sound/1. เสียงหลอนออนไลน์.mp4',
+        21
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-sound/2. Info_เสียงหลอนออนไลน์.png',
+        21
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-sound/3. Question_เสียงหลอนออนไลน์.pdf',
+        21
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-sound/4. Test_เสียงหลอนออนไลน์.jpg',
+        21
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/cyber-overload/1. ไซเบอร์ Overload.mp4',
+        22
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/cyber-overload/2. Info_ไซเบอร์ Overload.jpg',
+        22
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/cyber-overload/3. Question_ไซเบอร์ Overload.pdf',
+        22
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/cyber-overload/4. Test_ไซเบอร์ overload.png',
+        22
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-bullying/1. บูลลี่ออนไลน์.mp4',
+        23
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-bullying/2. Info_บูลลี่ออนไลน์.jpg',
+        23
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-bullying/3. Question_บูลลี่ออนไลน์.pdf',
+        23
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/online-bullying/4. Test_บูลลี่ออนไลน์.png',
+        23
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/scammer/1. ผู้ค้า หรือ มิจฉาชีพ.mp4',
+        24
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/scammer/2. Info_ผู้ค้า หรือมิจฉาชีพ.jpg',
+        24
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/scammer/3. Question_ผู้ค้า หรือ มิจฉาชีพ.pdf',
+        24
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content3/short-video/scammer/4. Test_ผู้ค้าหรือมิจฉาชีพ.png',
+        24
+    );
+
+-- Motion Graphic
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES (
+        'รู้จักกฎหมายไซเบอร์ในประเทศไทย',
+        'ไม่รู้กฎหมาย ไม่ใช่ข้ออ้างในการพ้นผิด',
+        'การใช้สื่อออนไลน์ที่ไม่ระมัดระวัง อาจนำไปสู่การกระทำผิดกฎหมายได้โดยไม่ตั้งใจ ประเทศไทยจึงได้จัดทำกฎหมายเฉพาะขึ้นเพื่อดูแลการกระทำบนโลกไซเบอร์ ได้แก่ พระราชบัญญัติว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์ พ.ศ. 2550 และฉบับแก้ไข พ.ศ. 2560 ที่มุ่งเน้นการควบคุมการแฮก การเผยแพร่ข้อมูลเท็จ และสื่อลามก, พระราชบัญญัติความมั่นคงปลอดภัยไซเบอร์ พ.ศ. 2562 ที่มีเป้าหมายเพื่อป้องกันโครงสร้างพื้นฐานของประเทศ และล่าสุดคือพระราชกำหนดว่าด้วยการป้องกันและปราบปรามอาชญากรรมทางเทคโนโลยี พ.ศ. 2566 ซึ่งให้อำนาจแก่ธนาคารในการอายัดธุรกรรมที่ต้องสงสัย เพื่อรับมือกับภัยการเงินออนไลน์ที่เกิดขึ้นถี่และรุนแรง',
+        'motion-graphic',
+        4
+    ),
+    (
+        'กฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA)',
+        'ข้อมูลของเรา ไม่ใช่สินค้าของใคร',
+        'พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 มีขึ้นเพื่อคุ้มครองสิทธิในความเป็นส่วนตัวของประชาชน กำหนดให้หน่วยงานหรือองค์กรที่เก็บข้อมูล ต้องขอความยินยอมอย่างโปร่งใสและชัดเจน ผู้ให้ข้อมูลสามารถถอนความยินยอมเมื่อใดก็ได้โดยไม่มีเงื่อนไข และหากเป็นเด็กหรือเยาวชน การให้ข้อมูลต้องผ่านผู้ปกครอง การฝ่าฝืนกฎหมายนี้จะทำให้ข้อมูลที่เก็บไว้ไม่ชอบด้วยกฎหมาย และองค์กรจะไม่สามารถใช้หรือเผยแพร่ข้อมูลนั้นได้',
+        'motion-graphic',
+        4
+    ),
+    (
+        'ไวรัสมัลแวร์-แชร์ไวไฟ',
+        null,
+        'สื่อชุดนี้นำเสนอการเตือนภัยไวรัสมัลแวร์ และการใช้ไวไฟสาธารณะ โดยร.ต.อ.นนทพันธ์ อินทรศวร จากกองบังคับการปราบปรามการรกระทำความผิดเกี่ยวกับอาชญากรรมทางเทคโนโลยี (ปอท.) ได้ให้ความรู้เกี่ยวกับการใช้สื่อออนไลน์อย่างปลอดภัยจากไวรัส และอันตรายของการใช้ wi-fi สาธารณะ เพื่อสร้างความตระหนักรู้ถึงภัยคุกคามทางไซเบอร์เรื่องไวรัสมัลแวร์ ซึ่งเป็นแนวทางในการป้องกันภัยไซเบอร์ในด้านไวรัสมัลแวร์ และอันตรายจากไวไฟสาธารณะ',
+        'short-video',
+        4
+    ),
+    (
+        'กล-โกง-เกม',
+        null,
+        'สื่อชุดนี้นำเสนอการเตือนภัยหลอกในเกม กลโกงต่างๆ ที่เกิดจาการเล่มเกม จากนายมรุต ทรัพย์โรจนสกุล เครือข่ายช่วยเหลือเหยื่อเกมออนไลน์ ช่อง GazX2 ซึ่งสร้างความตระหนักรู้ด้านกลโกงและวิธีการที่มิจฉาชีพใช้ในเกมออนไลน์ เพื่อเป็นแนวทางในการป้องกันเด็กและเยาวชนไม่ให้ตกเป็นเหยื่อมิจฉาชีพจากการเกมออนไลน์ โดยผู้ให้สัมภาษณ์ได้นำเสนอมุมมองธุรกิจที่เกิดขึ้นกับแพลตฟอร์มเกม และกลโกงที่มิจฉาชีพใช้ในเกม ไม่เพียงแค่จากผู้สัมภาษณ์เท่านั้น ในสื่อการเรียนรู้ยังได้มีการสะท้อนเสียงของผู้ตกเป็นเหยื่อและผู้ทำธุรกิจกับเกมออนไลน์ในการมาบอกเล่าเรื่องราวที่เกิดขึ้นกับภัยคุกคามจากเกมออนไลน์',
+        'short-video',
+        4
+    ),
+    (
+        'ตกปลา-หาเหยื่อ',
+        null,
+        'สื่อชุดนี้นำเสนอเรื่องจริงของอดีตสมาชิกแก๊งคอลเซ็นเตอร์ มากล่าวถึงวิธีการในการหลอกหลวงเหยื่อ และพ.ต.ต.กิติศัพดิ์ ออกรัมย์ พนักงานสอบสวนคดีแก๊งคอลเซ็นเตอร์ นำเสนอข้อมูลในการเข้าถึงขั้นตอนการพิสูจน์หลักฐานและรูปแบบวิธีการของมิจฉาชีพ เพื่อสร้างความตระหนักรู้ด้านความต้องการของมิจฉาชีพ รวมถึงวิธีการและรูปแบบที่มิจฉาชีพใช้ในการฟิชชิ่งเพื่อหลอกเอาข้อมูลส่วนบุคคลเรา ซึ่งเป็นแนวทางในการป้องกันภัยไซเบอร์ด้านภัยคุกคามทางจากแก๊งคอลเซ็นเตอร์',
+        'short-video',
+        4
+    );
+-- content_id: 25 (รู้จักกฎหมายไซเบอร์ในประเทศไทย)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/law/1. ทำความรู้จักกับกฎหมายไซเบอร์ในประเทศไทย 1.mp4',
+        25
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/law/1. ทำความรู้จักกับกฎหมายไซเบอร์ในประเทศไทย 2.mp4',
+        25
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/law/2. Info_ทำความรู้จักกับกฎหมายไซเบอร์ในประเทศไทย .png',
+        25
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/law/3. Question_ทำความรู้จักกับกฎหมายไซเบอร์ในประเทศไทย.pdf',
+        25
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/law/4. Test_ทำความรู้จักกับกฎหมายไซเบอร์ในประเทศไทย.png',
+        25
+    );
+
+-- content_id: 26 (PDPA)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/PDPA/1. กฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA).mp4',
+        26
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/PDPA/2. Info_กฎหมายคุ้มครองข้อมูลส่วนบุคคล.png',
+        26
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/PDPA/3. Question_กฎหมายคุ้มครองข้อมูลส่วนบุคคล.pdf',
+        26
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/motion-graphic/PDPA/4. Test_กฎหมายคุ้มครองข้อมูลส่วนบุคคล.png',
+        26
+    );
+
+-- content_id: 27 (ไวรัสมัลแวร์-แชร์ไวไฟ)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/virus-malware/1. ไวรัสมัลแวร์-แชร์ไวไฟ.mp4',
+        27
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/virus-malware/2. Info_ไวรัสมัลแวร์-แชร์ไวไฟ.jpg',
+        27
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/virus-malware/3. Question_ไวรัสมัลแวร์-แชร์ไวไฟ.pdf',
+        27
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/virus-malware/3. Test_ไวรัลมัลแวร์-แชร์ไวไฟ.png',
+        27
+    );
+
+-- content_id: 28 (กล-โกง-เกม)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/cheat/1. กล-โกง-เกม.mp4',
+        28
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/cheat/2. Info_กล-โกง-เกม.jpg',
+        28
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/cheat/3. Question_กล-โกง-เกม.pdf',
+        28
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/cheat/4. Test_กล-โกง-เกม.png',
+        28
+    );
+
+-- content_id: 29 (ตกปลา-หาเหยื่อ)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/bait/1. ตกปลา-หาเหยื่อ.mp4',
+        29
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/bait/2. Info_ตกปลา-หาเหยื่อ.jpg',
+        29
+    ),
+    (
+        'question',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/bait/3. Question_ตกปลา-หาเหยื่อ.pdf',
+        29
+    ),
+    (
+        'test',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Content4/short-video/bait/4. Test_ตกปลา-หาเหยื่อ.png',
+        29
+    );
+
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES (
+        'พฤติกรรมเด็กที่ตกเป็นเหยื่อ',
+        'ดร.ตฤณห์ โพธิ์รักษา ',
+        null,
+        'short-video',
+        5
+    ),
+    (
+        'ภัยควรรู้ เรื่อง แฮกเกอร์ ฟิชชิง มัลแวร์',
+        'ดร.ประวีณมัย บ่ายคล้อย',
+        null,
+        'short-video',
+        5
+    ),
+    (
+        'ภัยไซเบอร์ในกลุ่มเด็กและเยาวชน',
+        'พลตำรวจตรี ดร.ศิริวัฒน์ ดีพอ',
+        null,
+        'short-video',
+        5
+    ),
+    (
+        'บทบาทของครูกับ cyber bullying',
+        'อ.แกมแก้ว  โบษกรนัฏ',
+        null,
+        'short-video',
+        5
+    );
+
+-- content_id: 30 (พฤติกรรมเด็กที่ตกเป็นเหยื่อ)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/kid-behavior/ตอนที่. 1 พฤติกรรมเด็กที่ตกเป็นเหยื่อ.mp4',
+        30
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/kid-behavior/ตอนที่. 2 พฤติกรรมเด็กที่ตกเป็นเหยื่อ.mp4',
+        30
+    );
+
+-- content_id: 31 (ภัยควรรู้ เรื่อง แฮกเกอร์ ฟิชชิง มัลแวร์)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/hacker-fishing-malware/ตอนที่.1 ภัยควรรู้ เรื่อง แฮกเกอร์ ฟิชชิง มัลแวร์.mp4',
+        31
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/hacker-fishing-malware/ตอนที่.2 ภัยควรรู้ เรื่อง แฮกเกอร์ ฟิชชิง มัลแวร์.mp4',
+        31
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/hacker-fishing-malware/ตอนที่.3 ภัยควรรู้ เรื่อง แฮกเกอร์ ฟิชชิง มัลแวร์.mp4',
+        31
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/hacker-fishing-malware/ตอนที่.4 ภัยควรรู้ เรื่อง แฮกเกอร์ ฟิชชิง มัลแวร์.mp4',
+        31
+    );
+
+-- content_id: 32 (ภัยไซเบอร์ในกลุ่มเด็กและเยาวชน)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/cyber-threat /ตอนที่. 1 ภัยไซเบอร์ในกลุ่มเด็กและเยาวชน.mp4',
+        32
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/cyber-threat /ตอนที่. 2 ภัยไซเบอร์ในกลุ่มเด็กและเยาวชน.mp4',
+        32
+    );
+
+-- content_id: 33 (บทบาทของครูกับ cyber bullying)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/teacher-cyber-bullying/ตอนที่. 1 บทบาทของครูกับ cyber bullying.mp4',
+        33
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/teacher-cyber-bullying/ตอนที่. 2 บทบาทของครูกับ cyber bullying.mp4',
+        33
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/teacher-cyber-bullying/ตอนที่. 3 บทบาทของครูกับ cyber bullying.mp4',
+        33
+    ),
+    (
+        'video',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/teacher-cyber-bullying/ตอนที่. 4 บทบาทของครูกับ cyber bullying.mp4',
+        33
+    );
+
+INSERT INTO
+    topic_contents (
+        title,
+        content_text,
+        content_description,
+        content_type,
+        topic_id
+    )
+VALUES (
+        'แหล่งข้อมูลเสริมการเรียนรู้',
+        'การเรียนรู้ online ที่เกี่ยวข้อง',
+        null,
+        'others',
+        5
+    );
+
+-- content_id: 34 (สื่อสนับสนุนครู - file_type: info)
+INSERT INTO
+    content_files (
+        file_type,
+        file_url,
+        content_id
+    )
+VALUES (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/program/สื่อสนับสนุนครู คู่มือความปลอดภัยไซเบอร์.pdf',
+        34
+    ),
+    (
+        'info',
+        'https://cyberschool.sgp1.cdn.digitaloceanspaces.com/Teacher/program/สื่อสนับสนุนครู เว็บไซต์ ป้องกันภัย Cyber.pdf',
+        34
+    );
+
