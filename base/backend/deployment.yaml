@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: registry.cyber-safekids.com/cybersafekids/backend:v1.0.2
+          image: registry.cyber-safekids.com/cybersafekids/backend:1.0.2
           ports:
             - containerPort: 3001
           envFrom:

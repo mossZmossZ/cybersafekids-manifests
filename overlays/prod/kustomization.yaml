@@ -5,6 +5,6 @@ resources:
 
 images:
   - name: registry.cyber-safekids.com/cybersafekids/cybersafekids/backend
-    newTag: v1.0.2
+    newTag: 1.0.2
   - name: registry.cyber-safekids.com/cybersafekids/cybersafekids/frontend
-    newTag: v1.0.2
+    newTag: 1.0.2
