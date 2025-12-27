@@ -4,7 +4,7 @@ resources:
   - ../../base
 
 images:
-  - name: registry.cyber-safekids.com/cybersafekids/backend
+  - name: registry.cyber-safekids.com/cybersafekids/cybersafekids/backend
     newTag: v1.0.2
-  - name: registry.cyber-safekids.com/cybersafekids/frontend
+  - name: registry.cyber-safekids.com/cybersafekids/cybersafekids/frontend
     newTag: v1.0.2
